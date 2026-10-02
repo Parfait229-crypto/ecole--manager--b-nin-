@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>École Manager Bénin — Paiement</title>
+<style>
+:root{--bg:#f5f7fb;--surface:#fff;--text:#172033;--muted:#6b7280;--line:#e5e7eb;--primary:#155eef;--soft:#eaf1ff;--green:#138a5b;--orange:#c56a12;--red:#c93636}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}
+.app{min-height:100vh;background:var(--bg)}
+.top{padding:22px 18px 16px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.brand{font-weight:800;font-size:20px}.sub{font-size:13px;color:var(--muted);margin-top:3px}.pill{display:inline-block;margin-top:10px;background:var(--soft);color:var(--primary);padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}
+main{padding:18px;max-width:900px;margin:auto;padding-bottom:100px}.page{display:none}.page.active{display:block}.welcome h1{font-size:25px;margin:4px 0 6px}.welcome p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 3px 12px #17203308}.stat{font-size:25px;font-weight:800;margin-top:7px}.label{font-size:13px;color:var(--muted)}.accent{color:var(--primary)}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:24px 0 10px}.section-title h2{font-size:17px;margin:0}.btn{border:0;border-radius:11px;padding:10px 13px;font-weight:700;cursor:pointer}.btn.primary{background:var(--primary);color:#fff}.btn.light{background:var(--soft);color:var(--primary)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}.row{display:flex;align-items:center;justify-content:space-between;padding:14px 15px;border-bottom:1px solid var(--line)}.row:last-child{border-bottom:0}.small{font-size:12px;color:var(--muted)}.badge{padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}.paid{background:#e8f7f0;color:var(--green)}.due{background:#fff3e6;color:var(--orange)}.late{background:#fdecec;color:var(--red)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:10}.nav-inner{width:100%;max-width:900px;display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:none;padding:10px 4px 12px;color:var(--muted);font-size:11px}.nav button.active{color:var(--primary);font-weight:800}.icon{font-size:19px;display:block;margin-bottom:2px}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.action{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:left;cursor:pointer}.action strong{display:block;margin-top:6px}.modal{display:none;position:fixed;inset:0;background:#0007;z-index:20;align-items:flex-end}.modal.show{display:flex}.sheet{background:var(--surface);width:100%;border-radius:22px 22px 0 0;padding:20px;max-height:88vh;overflow:auto}.sheet h2{margin-top:0}.field{margin:12px 0}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}.field input,.field select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}.form-actions{display:flex;gap:10px;margin-top:18px}.empty{padding:22px;text-align:center;color:var(--muted)}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}.actions{grid-template-columns:repeat(4,1fr)}.nav{position:sticky;bottom:0}.sheet{max-width:520px;margin:auto;border-radius:18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="brand">🎓 École Manager Bénin</div><div class="sub">Gestion scolaire simple, depuis votre téléphone</div><span class="pill" id="planPill">Plan Gratuit</span></header>
+<main>
+<section id="dashboard" class="page active">
+<div class="welcome"><h1>Bonjour, Directeur 👋</h1><p>Voici la situation de votre établissement aujourd’hui.</p></div>
+<div class="grid"><div class="card"><div class="label">Élèves</div><div class="stat">486</div><div class="small">+18 cette année</div></div><div class="card"><div class="label">Enseignants</div><div class="stat">27</div><div class="small">3 absents aujourd’hui</div></div><div class="card"><div class="label">Paiements reçus</div><div class="stat">3,24 M</div><div class="small">FCFA ce mois</div></div><div class="card"><div class="label">Impayés</div><div class="stat" style="color:var(--red)">680 k</div><div class="small">FCFA à relancer</div></div></div>
+<div class="section-title"><h2>Actions rapides</h2></div><div class="actions"><button class="action" onclick="openModal('student')">➕<strong>Ajouter élève</strong><span class="small">Créer une fiche</span></button><button class="action" onclick="openModal('payment')">💰<strong>Enregistrer paiement</strong><span class="small">Créer un reçu</span></button><button class="action" onclick="openModal('attendance')">🗓️<strong>Présences</strong><span class="small">Marquer une classe</span></button><button class="action" onclick="openModal('report')">📄<strong>Bulletin</strong><span class="small">Préparer un bulletin</span></button></div>
+<div class="section-title"><h2>Derniers paiements</h2><button class="btn light" onclick="showPage('payments')">Voir tout</button></div><div class="list"><div class="row"><div><strong>Grâce A.</strong><div class="small">6e A · 02/10/2026</div></div><span class="badge paid">Payé · 25 000</span></div><div class="row"><div><strong>David K.</strong><div class="small">4e B · 02/10/2026</div></div><span class="badge paid">Payé · 30 000</span></div><div class="row"><div><strong>Sarah T.</strong><div class="small">3e A · 01/10/2026</div></div><span class="badge due">Partiel · 15 000</span></div></div>
+</section>
+<section id="students" class="page"><div class="section-title"><h2>Élèves</h2><button class="btn primary" onclick="openModal('student')">+ Ajouter</button></div><div class="list"><div class="row"><div><strong>Grâce A.</strong><div class="small">6e A · Matricule 2026-001</div></div><span class="badge paid">Active</span></div><div class="row"><div><strong>David K.</strong><div class="small">4e B · Matricule 2026-017</div></div><span class="badge paid">Active</span></div><div class="row"><div><strong>Sarah T.</strong><div class="small">3e A · Matricule 2026-041</div></div><span class="badge paid">Active</span></div><div class="row"><div><strong>Jonas H.</strong><div class="small">5e C · Matricule 2026-066</div></div><span class="badge late">Dossier incomplet</span></div></div></section>
+<section id="payments" class="page"><div class="section-title"><h2>Paiements scolaires</h2><button class="btn primary" onclick="openModal('payment')">+ Paiement</button></div><div class="grid"><div class="card"><div class="label">Reçus ce mois</div><div class="stat">3,24 M</div></div><div class="card"><div class="label">Impayés</div><div class="stat">680 k</div></div></div><div class="section-title"><h2>Historique</h2></div><div class="list"><div class="row"><div><strong>Grâce A.</strong><div class="small">Scolarité · Reçu #00481</div></div><span>25 000 FCFA</span></div><div class="row"><div><strong>David K.</strong><div class="small">Scolarité · Reçu #00480</div></div><span>30 000 FCFA</span></div><div class="row"><div><strong>Sarah T.</strong><div class="small">Acompte · Reçu #00479</div></div><span>15 000 FCFA</span></div></div></section>
+<section id="more" class="page"><div class="section-title"><h2>Administration</h2></div><div class="actions"><button class="action" onclick="alert('Module Notes : à connecter dans la prochaine version.')">📝<strong>Notes</strong><span class="small">Moyennes et résultats</span></button><button class="action" onclick="alert('Module Présences : à connecter dans la prochaine version.')">🗓️<strong>Présences</strong><span class="small">Absences et retards</span></button><button class="action" onclick="alert('Module Enseignants : à connecter dans la prochaine version.')">👩‍🏫<strong>Enseignants</strong><span class="small">Équipe pédagogique</span></button><button class="action" onclick="alert('Module Rapports : à connecter dans la prochaine version.')">📊<strong>Rapports</strong><span class="small">Statistiques de l’école</span></button><button class="action" onclick="showPage('subscription')">💳<strong>Abonnement</strong><span class="small">Gérer votre formule</span></button></div></section>
+<section id="subscription" class="page">
+<div class="section-title"><h2>Abonnement</h2><span class="badge paid" id="subStatus">Actif</span></div>
+<div class="card" style="background:linear-gradient(135deg,#155eef,#0b3aa4);color:white;border:0">
+<div class="label" style="color:#dbe7ff">Votre formule</div><div class="stat" id="currentPlan">Gratuit</div>
+<div class="small" style="color:#dbe7ff;margin-top:6px" id="currentPlanDesc">Pour découvrir l’application.</div>
+</div>
+<div class="section-title"><h2>Choisir une formule</h2></div>
+<div class="grid">
+<div class="card"><div class="label">Découverte</div><div class="stat">0 FCFA</div><div class="small">Élèves limités · fonctions essentielles</div><button class="btn light" style="margin-top:12px;width:100%" onclick="choosePlan('Gratuit',0)">Formule actuelle</button></div>
+<div class="card"><div class="label">École</div><div class="stat">5 000</div><div class="small">FCFA / mois · gestion complète</div><button class="btn primary" style="margin-top:12px;width:100%" onclick="choosePlan('École',5000)">Choisir</button></div>
+<div class="card"><div class="label">École Plus</div><div class="stat">10 000</div><div class="small">FCFA / mois · fonctions avancées</div><button class="btn primary" style="margin-top:12px;width:100%" onclick="choosePlan('École Plus',10000)">Choisir</button></div>
+<div class="card"><div class="label">Premium</div><div class="stat">20 000</div><div class="small">FCFA / mois · établissement complet</div><button class="btn primary" style="margin-top:12px;width:100%" onclick="choosePlan('Premium',20000)">Choisir</button></div>
+</div>
+<div class="section-title"><h2>Fonctions Premium</h2></div>
+<div class="list"><div class="row"><div><strong>📊 Rapports avancés</strong><div class="small">Statistiques financières et scolaires</div></div><span class="badge paid">Premium</span></div><div class="row"><div><strong>🧾 Bulletins</strong><div class="small">Préparation et impression</div></div><span class="badge paid">Premium</span></div><div class="row"><div><strong>📱 Notifications parents</strong><div class="small">À connecter à un service SMS/WhatsApp</div></div><span class="badge paid">Premium</span></div></div>
+<p class="small" style="margin-top:16px">Paiement sécurisé via FedaPay. Après confirmation réelle du paiement, votre formule est activée automatiquement pour 1 mois. Ne partagez jamais votre clé secrète de paiement.</p>
+</section>
+</main>
+<nav class="nav"><div class="nav-inner"><button class="active" onclick="showPage('dashboard',this)"><span class="icon">🏠</span>Accueil</button><button onclick="showPage('students',this)"><span class="icon">👨‍🎓</span>Élèves</button><button onclick="showPage('payments',this)"><span class="icon">💰</span>Paiements</button><button onclick="showPage('more',this)"><span class="icon">⚙️</span>Plus</button><button onclick="showPage('subscription',this)"><span class="icon">💳</span>Abonnement</button></div></nav>
+</div>
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="sheet"><h2 id="modalTitle">Ajouter</h2><div id="modalBody"></div><div class="form-actions"><button class="btn light" onclick="closeModal()">Annuler</button><button class="btn primary" onclick="saveDemo()">Enregistrer</button></div></div></div>
+<script>
+let selectedType='';
+const plans={Gratuit:{price:0,desc:'Pour découvrir l’application.'},École:{price:5000,desc:'Gestion complète pour une école.'},'École Plus':{price:10000,desc:'Fonctions avancées et rapports.'},Premium:{price:20000,desc:'Pour un établissement complet.'}};
+function showPage(id,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+function openModal(type){let title='',body='';selectedType=type;if(type==='student'){title='Ajouter un élève';body='<div class="field"><label>Nom complet</label><input placeholder="Ex. Grâce A."/></div><div class="field"><label>Classe</label><select><option>6e A</option><option>5e B</option><option>4e B</option><option>3e A</option></select></div><div class="field"><label>Nom du parent/tuteur</label><input placeholder="Nom du responsable"/></div><div class="field"><label>Téléphone</label><input placeholder="+229 ..." inputmode="tel"/></div>'}else if(type==='payment'){title='Enregistrer un paiement';body='<div class="field"><label>Élève</label><select><option>Grâce A.</option><option>David K.</option><option>Sarah T.</option></select></div><div class="field"><label>Montant (FCFA)</label><input type="number" placeholder="25000"/></div><div class="field"><label>Motif</label><select><option>Scolarité</option><option>Inscription</option><option>Uniforme</option><option>Autre</option></select></div>'}else if(type==='attendance'){title='Présences';body='<div class="field"><label>Classe</label><select><option>6e A</option><option>5e B</option><option>4e B</option></select></div><p class="small">Dans la version complète, la liste des élèves apparaîtra ici pour marquer présent, absent ou retard.</p>'}else{title='Préparer un bulletin';body='<div class="field"><label>Élève</label><select><option>Grâce A.</option><option>David K.</option></select></div><div class="field"><label>Période</label><select><option>1er trimestre</option><option>2e trimestre</option><option>3e trimestre</option></select></div><p class="small">La version complète calculera automatiquement les moyennes et préparera le bulletin.</p>'}document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function saveDemo(){alert('Enregistrement de démonstration effectué. Dans la prochaine étape, les données seront réellement stockées.');closeModal()}
+function getSchoolId(){let id=localStorage.getItem('schoolId');if(!id){id='school_'+crypto.randomUUID();localStorage.setItem('schoolId',id)}return id}
+async function choosePlan(name,price){
+  if(name==='Gratuit'){localStorage.setItem('schoolPlan','Gratuit');localStorage.removeItem('schoolExpiresAt');updatePlanUI();return;}
+  const firstname=prompt('Prénom du responsable :'); if(!firstname)return;
+  const lastname=prompt('Nom du responsable :'); if(!lastname)return;
+  const email=prompt('Email du responsable :'); if(!email)return;
+  const phone=prompt('Téléphone Bénin (+229...) :'); if(!phone)return;
+  const btnText='Paiement de '+price.toLocaleString('fr-FR')+' FCFA pour '+name+'\n\nVous allez être redirigé vers FedaPay. Après paiement confirmé, Premium sera activé automatiquement.';
+  if(!confirm(btnText))return;
+  try{
+    document.getElementById('subStatus').textContent='Paiement en préparation…';
+    const r=await fetch('/api/create-payment',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({schoolId:getSchoolId(),plan:name,firstname,lastname,email,phone})});
+    const data=await r.json();
+    if(!r.ok)throw new Error(data.error||'Erreur de paiement');
+    localStorage.setItem('pendingTransactionId',String(data.transactionId));
+    window.location.href=data.paymentUrl;
+  }catch(e){alert('Impossible de lancer le paiement : '+e.message);updatePlanUI()}
+}
+async function refreshSubscription(){
+  try{
+    const r=await fetch('/api/subscription/'+encodeURIComponent(getSchoolId()));
+    if(!r.ok)return;
+    const data=await r.json();
+    if(data.plan){localStorage.setItem('schoolPlan',data.plan)}
+    if(data.expiresAt)localStorage.setItem('schoolExpiresAt',data.expiresAt);
+    updatePlanUI(data);
+  }catch(e){updatePlanUI()}
+}
+function updatePlanUI(serverData){
+  const name=(serverData&&serverData.expired)?'Gratuit':(serverData?.plan||localStorage.getItem('schoolPlan')||'Gratuit');
+  const plan=plans[name]||plans.Gratuit;
+  document.getElementById('planPill').textContent='Plan '+name;
+  document.getElementById('currentPlan').textContent=name;
+  document.getElementById('currentPlanDesc').textContent=plan.desc+(serverData?.expiresAt?' · jusqu’au '+new Date(serverData.expiresAt).toLocaleDateString('fr-FR'): '');
+  document.getElementById('subStatus').textContent=name==='Gratuit'?'Essai gratuit':'Abonnement actif';
+}
+refreshSubscription();
+
+</script>
+</body></html>
